@@ -39,14 +39,15 @@ extension View {
 }
 
 struct NavigationBar: View {
+    @StateObject private var pointsModel = PointsModel()
     var body: some View {
         TabView {
-                    HomeView()
+                    HomeView(pointsModel: pointsModel)
                         .tabItem {
                             Image(systemName: "house.fill")
                             Text("Home")
                         }
-                    Rewards()
+                    Rewards(pointsModel: pointsModel)
                         .tabItem {
                             Image(systemName: "cart.fill")
                             Text("Rewards")
@@ -67,7 +68,7 @@ struct NavigationBar: View {
                             Text("Profile")
                         }
                 }
-                .accentColor(Color(UIColor(hex: "#FFBA00")))
+                
                 .tabBarBackgroundColor(UIColor(hex: "#0C3B2E"), unselectedIconColor: UIColor.white)
     }
 }

@@ -8,10 +8,12 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State public var point = 1000
+    @ObservedObject var pointsModel: PointsModel
+    @State public var point: Int = 500
     @State public var name = "User"
-  
+    
     var body: some View {
+        
         ScrollView{
             VStack {
                 HStack{
@@ -27,13 +29,16 @@ struct HomeView: View {
                         .fill(Color(UIColor(hex: "#6D9773")))
                         .frame(width: 90, height: 34)
                         .overlay(
-                            Text("\(point)P").bold()
+                            Text("\(pointsModel.points)P").bold()
                                 .foregroundColor(.white)
                                 .font(.system(size: 20))
                                 .multilineTextAlignment(.center)
+                            
                         )
                         .padding(.trailing, 30)
+                        
                 }
+                
                     Image("tree")
                         .resizable()
                         .scaledToFit()
@@ -130,8 +135,11 @@ struct HomeView: View {
             }
         }
     }
+    
 }
 
-#Preview {
-    HomeView()
-}
+//#Preview {
+//    HomeView()
+//}
+
+
