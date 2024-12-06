@@ -26,6 +26,8 @@ struct HomeView: View {
     @State private var isEditing: Bool = false // Controls the popup visibility
     @State private var inputText: String = ""
     @State private var checkError: Bool = false
+    @State private var navigateToStep: Bool = false
+
     
     // for name
     @State private var inputName: String = ""
@@ -71,9 +73,6 @@ struct HomeView: View {
                             .multilineTextAlignment(.center)
                         
                         // Step
-                        Button(action: {
-                            navigateToChallenge = true
-                        }) {
                             RoundedRectangle(cornerRadius: 15)
                                 .fill(Color(UIColor(hex:"#B46617")))
                                 .frame(width: 350, height: 100)
@@ -123,10 +122,7 @@ struct HomeView: View {
                                         .padding(.leading, 30)
                                 )
                                 .padding(.bottom, 10)
-                        }
-                        NavigationLink(destination: Rewards(), isActive: $navigateToChallenge) {
-                            EmptyView()
-                        }
+                        
                         
                         // Challenges
                         Button(action: {
@@ -158,7 +154,7 @@ struct HomeView: View {
                                 )
                                 .padding(.bottom, 10)
                         }
-                        NavigationLink(destination: Rewards(), isActive: $navigateToChallenge) {
+                        NavigationLink(destination: Challenges(), isActive: $navigateToChallenge) {
                             EmptyView()
                         }
                         
