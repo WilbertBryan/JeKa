@@ -65,43 +65,25 @@ struct ProfileView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         NavigationLink(destination: Text("Challenge View")) {
                             MenuRow(title: "Challenge")
-                                .foregroundColor(.black) // Change color to black
                         }
 
                         NavigationLink(destination: Text("Quiz View")) {
                             MenuRow(title: "Quiz")
-                                .foregroundColor(.black) // Change color to black
+                                
                         }
 
                         NavigationLink(destination: Text("Step View")) {
                             MenuRow(title: "Step")
-                                .foregroundColor(.black) // Change color to black
+                                
                         }
 
                         NavigationLink(destination: Text("Change Password View")) {
                             MenuRow(title: "Change Password")
-                                .foregroundColor(.black) // Change color to black
+                            
                         }
                     }
                     .padding(.horizontal)
 
-                    // Move Logout Button Up
-                    Button(action: {
-                        print("Logout tapped")
-                    }) {
-
-                        Text("Logout")
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .padding(.vertical, 10) // Smaller vertical padding
-                            .padding(.horizontal, 45) // Adjusted horizontal padding for a compact look
-                            .background(Color.yellow)
-                            .cornerRadius(20) // Rounded rectangle
-
-                    }
-
-                    .padding(.top, 10) // Added padding to move the button upwards
-                    .padding(.horizontal) // Add horizontal padding for better spacing
                 }
                 .navigationBarHidden(true) // Hide default navigation bar title
                 }
@@ -120,7 +102,7 @@ struct MenuRow: View {
         HStack {
             Text(title)
                 .font(.headline)
-                .foregroundColor(.black) // Ensure text color is black
+                .foregroundColor(.primary) // Ensure text color is black
 
             Spacer()
 
