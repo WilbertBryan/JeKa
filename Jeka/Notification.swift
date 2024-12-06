@@ -36,10 +36,13 @@ struct Notification: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(voucher.name)
                                     .font(.headline)
+                                    .foregroundColor(.black)
                                 Text("Points: \(voucher.points)")
                                     .font(.subheadline)
+                                    .foregroundColor(.black)
                                 Text("Category: \(voucher.category)")
                                     .font(.subheadline)
+                                    .foregroundColor(.black)
                                 Text("Redeemed on: \(voucher.dateRedeemed.formatted(.dateTime))")
                                     .font(.footnote)
                                     .foregroundColor(.gray)
