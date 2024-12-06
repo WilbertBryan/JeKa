@@ -25,9 +25,11 @@ extension UIColor {
 
 @main
 struct JekaApp: App {
+    @StateObject var healthManager = HealthManager()
     var body: some Scene {
         WindowGroup {
             LoadingScreen()
+                .environmentObject(healthManager)
         }
     }
 }
