@@ -39,6 +39,7 @@ extension View {
 }
 
 struct NavigationBar: View {
+    @EnvironmentObject var manager: HealthManager
     var body: some View {
         TabView {
                     HomeView()
@@ -46,6 +47,7 @@ struct NavigationBar: View {
                             Image(systemName: "house.fill")
                             Text("Home")
                         }
+                        .environmentObject(HealthManager())
                     Rewards()
                         .tabItem {
                             Image(systemName: "cart.fill")
