@@ -159,6 +159,6 @@ struct Rewards: View {
 
 
 
-#Preview {
-    Rewards()
-}
+//#Preview {
+//    Rewards()
+//}

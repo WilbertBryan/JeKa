@@ -134,6 +134,6 @@ struct MenuRow: View {
         .cornerRadius(10)
     }
 }
-#Preview {
-    ProfileView()
-}
+//#Preview {
+//    ProfileView()
+//}

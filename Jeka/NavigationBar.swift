@@ -51,7 +51,7 @@ struct NavigationBar: View {
                             Image(systemName: "cart.fill")
                             Text("Rewards")
                         }
-                    Text("Nearby Screen")
+                   Text("Hoho")
                         .tabItem {
                             Image(systemName: "qrcode")
                             Text("QR")
@@ -67,7 +67,7 @@ struct NavigationBar: View {
                             Text("Profile")
                         }
                 }
-                .accentColor(Color(UIColor(hex: "#FFBA00")))
+                //.accentColor(Color(UIColor(hex: "#FFBA00")))
                 .tabBarBackgroundColor(UIColor(hex: "#0C3B2E"), unselectedIconColor: UIColor.white)
     }
 }
