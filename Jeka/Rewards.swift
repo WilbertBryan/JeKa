@@ -7,6 +7,7 @@
 
 
 import SwiftUI
+import SwiftData
 
 struct Rewards: View {
     @ObservedObject var pointsModel: PointsModel
@@ -14,6 +15,7 @@ struct Rewards: View {
     @State private var showingInsufficientPointsAlert = false
     @State private var selectedVoucher: (name: String, description: String, points: Int, category: Category, isRedeemed: Bool, images : String)? = nil
     @State private var showingRedeemSuccess = false
+    @Environment(\.modelContext) private var context
 
     enum Category: String {
         case all = "All"
@@ -70,7 +72,7 @@ struct Rewards: View {
             Button("Cancel", role: .cancel) { }
             Button("Confirm") {
                 if let voucher = selectedVoucher {
-                    redeemVoucher(voucher: voucher)
+                    redeemVoucher(voucher: voucher, context: context)
                 }
             }
         } message: {
@@ -214,8 +216,9 @@ struct Rewards: View {
         .disabled(voucher.isRedeemed) // Disable tombol jika voucher sudah diredeem
     }
 
-    func redeemVoucher(voucher: (name: String, description: String, points: Int, category: Category, isRedeemed: Bool, images: String)) {
+    func redeemVoucher(voucher: (name: String, description: String, points: Int, category: Category, isRedeemed: Bool, images: String), context: ModelContext) {
         pointsModel.points -= voucher.points
+        saveVoucher(name: voucher.name, points: voucher.points, category: voucher.category.rawValue, context: context)
         saveRedeemedVoucher(name: voucher.name)
         if let index = vouchers.firstIndex(where: { $0.name == voucher.name }) {
                 vouchers.remove(at: index)
@@ -238,6 +241,27 @@ struct Rewards: View {
         if !redeemedNames.contains(name) {
             redeemedNames.append(name)
             UserDefaults.standard.set(redeemedNames, forKey: redeemedKey)
+        }
+    }
+    
+    func saveVoucher(name: String, points: Int, category: String, context: ModelContext) {
+        let newVoucher = RedeemedVoucher(name: name, points: points, category: category)
+        context.insert(newVoucher)
+        
+        do {
+            try context.save()
+            print("Voucher \(name) berhasil disimpan.")
+        } catch {
+            print("Gagal menyimpan voucher: \(error)")
+        }
+    }
+    func fetchRedeemedVouchers(context: ModelContext) -> [RedeemedVoucher] {
+        do {
+            let redeemedVouchers = try context.fetch(FetchDescriptor<RedeemedVoucher>())
+            return redeemedVouchers
+        } catch {
+            print("Gagal mengambil data voucher: \(error)")
+            return []
         }
     }
 }

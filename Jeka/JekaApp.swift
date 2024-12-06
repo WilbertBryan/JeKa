@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 extension UIColor {
     public convenience init(hex: String) {
@@ -23,11 +24,33 @@ extension UIColor {
     }
 }
 
+
+
+@Model
+class RedeemedVoucher {
+    @Attribute(.unique) var id: UUID // ID unik untuk setiap voucher
+    var name: String                 // Nama voucher
+    var points: Int                  // Poin yang digunakan
+    var category: String             // Kategori voucher
+    var dateRedeemed: Date           // Waktu voucher diredeem
+
+    // Initializer untuk membuat instance baru
+    init(id: UUID = UUID(), name: String, points: Int, category: String, dateRedeemed: Date = Date()) {
+        self.id = id
+        self.name = name
+        self.points = points
+        self.category = category
+        self.dateRedeemed = dateRedeemed
+    }
+}
+
+
 @main
 struct JekaApp: App {
     var body: some Scene {
         WindowGroup {
             LoadingScreen()
+                .modelContainer(for: [RedeemedVoucher.self])
         }
     }
 }
