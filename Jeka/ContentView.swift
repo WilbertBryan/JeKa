@@ -243,7 +243,9 @@ func isNewDay(from date: Date?) -> Bool {
                     noName = true
                 }
             }
-            
+            .onAppear {
+                startTimer()
+            }
         }
         
         
