@@ -34,11 +34,8 @@ struct Notification: View {
                                 .frame(maxWidth: .infinity, minHeight: 100)
                             
                             VStack(alignment: .leading, spacing: 8) {
-                                Text(voucher.name)
+                                Text("You redeemed \(voucher.name) for \(voucher.redeemedPoints) Points")
                                     .font(.headline)
-                                    .foregroundColor(.black)
-                                Text("Points: \(voucher.points)")
-                                    .font(.subheadline)
                                     .foregroundColor(.black)
                                 Text("Category: \(voucher.category)")
                                     .font(.subheadline)

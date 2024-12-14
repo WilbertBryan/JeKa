@@ -63,13 +63,13 @@ struct Rewards: View {
             }
         }
         .onAppear {
-                    loadRedeemedVouchers()
+//                    loadRedeemedVouchers()
                 }
         .alert(isPresented: $showingInsufficientPointsAlert) {
             Alert(title: Text("Insufficient Points"), message: Text("You do not have enough points to redeem this voucher."), dismissButton: .default(Text("OK")))
         }
         .alert("Are you sure?", isPresented: $showingConfirmation) {
-            Button("Cancel", role: .cancel) { }
+            Button("Cancel",role: .cancel) { }
             Button("Confirm") {
                 if let voucher = selectedVoucher {
                     redeemVoucher(voucher: voucher, context: context)
@@ -218,8 +218,8 @@ struct Rewards: View {
 
     func redeemVoucher(voucher: (name: String, description: String, points: Int, category: Category, isRedeemed: Bool, images: String), context: ModelContext) {
         pointsModel.points -= voucher.points
-        saveVoucher(name: voucher.name, points: voucher.points, category: voucher.category.rawValue, context: context)
-        saveRedeemedVoucher(name: voucher.name)
+        saveVoucher(name: voucher.name, redeemedPoints: voucher.points, category: voucher.category.rawValue, context: context)
+//        saveRedeemedVoucher(name: voucher.name)
         if let index = vouchers.firstIndex(where: { $0.name == voucher.name }) {
                 vouchers.remove(at: index)
             }
@@ -231,21 +231,21 @@ struct Rewards: View {
         }
     }
     
-    private func loadRedeemedVouchers() {
-            let redeemedNames = UserDefaults.standard.stringArray(forKey: redeemedKey) ?? []
-            vouchers.removeAll { redeemedNames.contains($0.name) }
-        }
-
-    private func saveRedeemedVoucher(name: String) {
-        var redeemedNames = UserDefaults.standard.stringArray(forKey: redeemedKey) ?? []
-        if !redeemedNames.contains(name) {
-            redeemedNames.append(name)
-            UserDefaults.standard.set(redeemedNames, forKey: redeemedKey)
-        }
-    }
+//    private func loadRedeemedVouchers() {
+//            let redeemedNames = UserDefaults.standard.stringArray(forKey: redeemedKey) ?? []
+//            vouchers.removeAll { redeemedNames.contains($0.name) }
+//        }
+//
+//    private func saveRedeemedVoucher(name: String) {
+//        var redeemedNames = UserDefaults.standard.stringArray(forKey: redeemedKey) ?? []
+//        if !redeemedNames.contains(name) {
+//            redeemedNames.append(name)
+//            UserDefaults.standard.set(redeemedNames, forKey: redeemedKey)
+//        }
+//    }
     
-    func saveVoucher(name: String, points: Int, category: String, context: ModelContext) {
-        let newVoucher = RedeemedVoucher(name: name, points: points, category: category)
+    func saveVoucher(name: String, redeemedPoints: Int, category: String, context: ModelContext) {
+        let newVoucher = RedeemedVoucher(name: name, redeemedPoints: redeemedPoints, category: category)
         context.insert(newVoucher)
         
         do {

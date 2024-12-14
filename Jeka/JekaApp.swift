@@ -30,17 +30,28 @@ extension UIColor {
 class RedeemedVoucher {
     @Attribute(.unique) var id: UUID // ID unik untuk setiap voucher
     var name: String                 // Nama voucher
-    var points: Int                  // Poin yang digunakan
+    var redeemedPoints: Int                  // Poin yang digunakan
     var category: String             // Kategori voucher
     var dateRedeemed: Date           // Waktu voucher diredeem
 
     // Initializer untuk membuat instance baru
-    init(id: UUID = UUID(), name: String, points: Int, category: String, dateRedeemed: Date = Date()) {
+    init(id: UUID = UUID(), name: String, redeemedPoints: Int, category: String, dateRedeemed: Date = Date()) {
         self.id = id
         self.name = name
-        self.points = points
+        self.redeemedPoints = redeemedPoints
         self.category = category
         self.dateRedeemed = dateRedeemed
+    }
+}
+class GetVoucher{
+    @Attribute(.unique) var getId : UUID
+    var recievePoints: Int
+    var dateReceived: Date
+    
+    init(getId:UUID = UUID(), recievePoints: Int, dateReceived: Date = Date()){
+        self.getId = getId
+        self.recievePoints = recievePoints
+        self.dateReceived = dateReceived
     }
 }
 
