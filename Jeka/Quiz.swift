@@ -43,14 +43,14 @@ struct Quiz: View {
     @State private var countCorrect = 0
     @State private var navigateToHome = false
     @Binding var isQuizComplete: Bool
-    
+    @StateObject private var pointsModel = PointsModel()
     var body: some View {
         //            if isQuizComplete {
         //                           // Display QuizComplete view when the quiz is finished
         //               // QuizComplete(countCorrect: $countCorrect)
         //            } else {
         if navigateToHome{
-            HomeView()
+            HomeView(pointsModel: pointsModel)
                 .navigationBarBackButtonHidden(true)
         } else {
             
