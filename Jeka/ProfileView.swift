@@ -68,7 +68,7 @@ struct ProfileView: View {
                             MenuRow(title: "Challenge")
                             
                         }
-                        NavigationLink(destination: Rewards(), isActive: $navigateToChallenge) {
+                        NavigationLink(destination: Challenges(), isActive: $navigateToChallenge) {
                             EmptyView()
                         }
                         

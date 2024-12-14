@@ -85,6 +85,9 @@ func isNewDay(from date: Date?) -> Bool {
                             .multilineTextAlignment(.center)
                         
                         // Step
+                        Button(action: {
+                            navigateToStep = true
+                        }) {
                         RoundedRectangle(cornerRadius: 15)
                             .fill(Color(UIColor(hex:"#B46617")))
                             .frame(width: 350, height: 100)
@@ -133,8 +136,11 @@ func isNewDay(from date: Date?) -> Bool {
                                 } .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding(.leading, 30)
                             )
+                    }
                             .padding(.bottom, 10)
-                        
+                        NavigationLink(destination: StepScreen(), isActive: $navigateToStep) {
+                            EmptyView()
+                        }
                         
                         // Challenges
                         Button(action: {
@@ -397,6 +403,6 @@ func isNewDay(from date: Date?) -> Bool {
     }
 
 
-#Preview {
-    HomeView()
-}
+//#Preview {
+//    HomeView()
+//}
