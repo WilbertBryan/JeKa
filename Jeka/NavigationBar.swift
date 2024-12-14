@@ -40,19 +40,21 @@ extension View {
 
 struct NavigationBar: View {
     @StateObject private var pointsModel = PointsModel()
+    @EnvironmentObject var manager: HealthManager
     var body: some View {
         TabView {
-                    HomeView(pointsModel: pointsModel)
+                HomeView(pointsModel: pointsModel)
                         .tabItem {
                             Image(systemName: "house.fill")
                             Text("Home")
                         }
+                        .environmentObject(HealthManager())
                     Rewards(pointsModel: pointsModel)
                         .tabItem {
                             Image(systemName: "cart.fill")
                             Text("Rewards")
                         }
-                    Text("Nearby Screen")
+                   Text("Hoho")
                         .tabItem {
                             Image(systemName: "qrcode")
                             Text("QR")
@@ -68,7 +70,6 @@ struct NavigationBar: View {
                             Text("Profile")
                         }
                 }
-                
                 .tabBarBackgroundColor(UIColor(hex: "#0C3B2E"), unselectedIconColor: UIColor.white)
     }
 }

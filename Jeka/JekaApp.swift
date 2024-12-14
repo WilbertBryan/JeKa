@@ -58,10 +58,13 @@ class GetVoucher{
 
 @main
 struct JekaApp: App {
+    @StateObject var healthManager = HealthManager()
     var body: some Scene {
         WindowGroup {
             LoadingScreen()
+
                 .modelContainer(for: [RedeemedVoucher.self])
+                .environmentObject(healthManager)
         }
     }
 }

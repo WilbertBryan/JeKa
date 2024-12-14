@@ -1,14 +1,10 @@
-//
-//  ProfileView.swift
-//  Jeka
-//
-//  Created by student on 22/11/24.
-//
-
 import SwiftUI
 
 struct ProfileView: View {
-
+    @State public var name: String = UserDefaults.standard.string(forKey: "name") ?? "User"
+    @State private var navigateToChallenge: Bool = false
+    @State private var navigateToStep: Bool = false
+    @StateObject private var pointsModel = PointsModel()
     var body: some View {
         NavigationView {
             VStack(spacing:20) {
@@ -32,10 +28,11 @@ struct ProfileView: View {
                         Text("Change Picture")
                             .font(.footnote)
                             .foregroundColor(.black) // Changed from blue to black
-                        Text("Hi User")
+                        Text("\(name)")
                             .font(.largeTitle)
                             .fontWeight(.medium)
                     }
+                    
                     // Voucher and Points Section
                     HStack(spacing: 75) {
                         VStack {
@@ -51,7 +48,7 @@ struct ProfileView: View {
                             Image(systemName: "star.fill")
                                 .font(.largeTitle)
                             Text("Point")
-                            Text("1500P")
+                            Text("1500P") // point
                                 .font(.headline)
                         }
                     }
@@ -60,19 +57,30 @@ struct ProfileView: View {
                     .background(Color(.systemGray6))
                     .cornerRadius(10)
                     .padding(.horizontal) // Add padding to align with the menu
-
+                    
                     // Menu Section
                     VStack(alignment: .leading, spacing: 10) {
-                        NavigationLink(destination: Text("Challenge View")) {
+                        
+                        // Challenge
+                        Button(action: {
+                            navigateToChallenge = true
+                        }) {
                             MenuRow(title: "Challenge")
                         }
 
                         NavigationLink(destination: Text("Quiz View")) {
                             MenuRow(title: "Quiz")
                                 
+                            
                         }
-
-                        NavigationLink(destination: Text("Step View")) {
+                        NavigationLink(destination: Challenges(), isActive: $navigateToChallenge) {
+                            EmptyView()
+                        }
+                        
+                        // Step
+                        Button(action: {
+                            navigateToStep = true
+                        }) {
                             MenuRow(title: "Step")
                                 
                         }
@@ -80,37 +88,45 @@ struct ProfileView: View {
                         NavigationLink(destination: Text("Change Password View")) {
                             MenuRow(title: "Change Password")
                             
+                            
                         }
+                        NavigationLink(destination: Rewards(pointsModel: pointsModel), isActive: $navigateToStep) {
+                            EmptyView()
+
+                        }
+                        
                     }
                     .padding(.horizontal)
-
+                    
                 }
                 .navigationBarHidden(true) // Hide default navigation bar title
-                }
+            }
         }
         
-            
+        
     }
 }
-
-
 
 struct MenuRow: View {
     let title: String
     var body: some View {
-
+        
         HStack {
             Text(title)
                 .font(.headline)
                 .foregroundColor(.primary) // Ensure text color is black
 
+
+                .foregroundColor(.primary)
+            
+
             Spacer()
-
+            
             Image(systemName: "chevron.right")
-                .foregroundColor(.gray)
-
+                .foregroundColor(.secondary)
+            
         }
-
+        
         .padding()
         .background(Color(.systemGray6))
         .cornerRadius(10)

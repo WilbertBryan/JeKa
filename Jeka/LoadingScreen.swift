@@ -11,9 +11,11 @@ import SwiftUI
 
 struct LoadingScreen: View {
     @State private var isActive = false
+    @EnvironmentObject var healthManager: HealthManager
     var body: some View {
         if isActive{
             NavigationBar()
+                .environmentObject(HealthManager())
         }
         else{
             VStack {
@@ -59,7 +61,7 @@ struct LoadingScreen: View {
 
 
 
-#Preview {
-    LoadingScreen()
-
-}
+//#Preview {
+//    LoadingScreen()
+//
+//}
