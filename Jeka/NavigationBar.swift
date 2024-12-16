@@ -71,6 +71,7 @@ struct NavigationBar: View {
                         }
                 }
                 .tabBarBackgroundColor(UIColor(hex: "#0C3B2E"), unselectedIconColor: UIColor.white)
+        
     }
 }
 

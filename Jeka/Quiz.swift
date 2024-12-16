@@ -43,7 +43,9 @@ struct Quiz: View {
     @State private var countCorrect = 0
     @State private var navigateToHome = false
     @Binding var isQuizComplete: Bool
-    @StateObject private var pointsModel = PointsModel()
+    @ObservedObject var pointsModel: PointsModel
+    @State private var point = 0
+    
     var body: some View {
         //            if isQuizComplete {
         //                           // Display QuizComplete view when the quiz is finished
@@ -70,7 +72,7 @@ struct Quiz: View {
             
             // Background Image
             ZStack{
-                Image("quiz")
+                Image("Quiz")
                     .resizable()
                     .scaledToFill()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -113,14 +115,8 @@ struct Quiz: View {
                                         // CHECK CORRECT ANSWER
                                         if correctAnswer[count] == userSelect {
                                             countCorrect += 1
+                                            point += 50
                                         }
-                                        
-                                        //                                    if count < question.count - 1 {
-                                        //                                        count = 1
-                                        //                                    } else {
-                                        //                                        print("Quiz complete!")
-                                        //                                        count = 0
-                                        //                                    }
                                     }
                                 )
                             }
@@ -145,9 +141,10 @@ struct Quiz: View {
                                     .cornerRadius(10)
                                 
                             } .disabled(selectedAnswerIndex == nil) // Disable "Next" until an answer is selected
-                                .alert("Your correct answer is \(countCorrect)", isPresented: $isQuizComplete) {
+                                .alert("Your correct answer is \(countCorrect). \(point) is rewarded", isPresented: $isQuizComplete) {
                                     Button("OK") {
                                         navigateToHome = true
+                                        pointsModel.points += point
                                     }
                                 }
                         }
