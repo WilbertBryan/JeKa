@@ -4,7 +4,7 @@ struct ProfileView: View {
     @State public var name: String = UserDefaults.standard.string(forKey: "name") ?? "User"
     @State private var navigateToChallenge: Bool = false
     @State private var navigateToStep: Bool = false
-    @StateObject private var pointsModel = PointsModel()
+    @ObservedObject var pointsModel: PointsModel
     var body: some View {
         NavigationView {
             VStack(spacing:20) {
@@ -122,5 +122,5 @@ struct MenuRow: View {
     }
 }
 #Preview {
-    ProfileView()
+    ProfileView(pointsModel: PointsModel())
 }

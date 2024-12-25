@@ -13,16 +13,7 @@ struct StepScreen: View {
     @State private var progressStep = UserDefaults.standard.object(forKey: "todayStepCount") ?? "0"
     @State private var progressCalorie = UserDefaults.standard.object(forKey: "todayCalories") ?? "0"
     @State private var progressDistance = UserDefaults.standard.object(forKey: "todayDistances") ?? "0"
-    // Sample data for steps
-    let stepsData: [Step] = [
-        Step(day: "Wed", count: 3000),
-        Step(day: "Thu", count: 5000),
-        Step(day: "Fri", count: 7000),
-        Step(day: "Sat", count: 2000),
-        Step(day: "Sun", count: 4000),
-        Step(day: "Mon", count: 8000),
-        Step(day: "Tue", count: 9000)
-    ]
+    @State private var weeklySteps: [Step] = []
     var body: some View {
         ScrollView{
             VStack{
@@ -41,7 +32,7 @@ struct StepScreen: View {
                     .foregroundColor(Color(UIColor(hex:"#B9B9B9")))
                 
                 Chart {
-                    ForEach(stepsData) { step in
+                    ForEach(weeklySteps) { step in
                         BarMark(
                             x: .value("Day", step.day),
                             y: .value("Steps", step.count)
@@ -136,6 +127,11 @@ struct StepScreen: View {
                     } .padding(.leading,-120)
                     
                 )
+        }
+        .onAppear(){
+            HealthManager().fetchWeeklySteps { steps in
+                    self.weeklySteps = steps
+                }
         }
         .onAppear {
             startTimer()

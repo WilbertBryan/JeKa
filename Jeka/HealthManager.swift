@@ -94,6 +94,44 @@ class HealthManager: ObservableObject {
         }
         healthStore.execute(query)
     }
+    
+    //func for chart
+    func fetchWeeklySteps(completion: @escaping ([Step]) -> Void) {
+        let steps = HKQuantityType(.stepCount)
+        let calendar = Calendar.current
+        let interval = DateComponents(day: 1)
+        let startDate = calendar.date(byAdding: .day, value: -6, to: Date.startOfDay)!
+        let anchorDate = calendar.startOfDay(for: Date())
+        
+        let query = HKStatisticsCollectionQuery(
+            quantityType: steps,
+            quantitySamplePredicate: nil,
+            options: .cumulativeSum,
+            anchorDate: anchorDate,
+            intervalComponents: interval
+        )
+        
+        query.initialResultsHandler = { _, result, error in
+            guard let result = result, error == nil else {
+                print("Error fetching weekly step data: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            
+            var weeklySteps: [Step] = []
+            result.enumerateStatistics(from: startDate, to: Date()) { statistics, _ in
+                let stepCount = statistics.sumQuantity()?.doubleValue(for: .count()) ?? 0
+                let date = statistics.startDate
+                let day = DateFormatter().shortWeekdaySymbols[calendar.component(.weekday, from: date) - 1]
+                weeklySteps.append(Step(day: day, count: Int(stepCount)))
+            }
+            
+            DispatchQueue.main.async {
+                completion(weeklySteps)
+            }
+        }
+        
+        healthStore.execute(query)
+    }
 }
 
 extension Double{

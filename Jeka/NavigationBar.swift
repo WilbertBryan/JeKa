@@ -54,7 +54,7 @@ struct NavigationBar: View {
                             Image(systemName: "cart.fill")
                             Text("Rewards")
                         }
-                   Text("Hoho")
+                   ScanningScreen(pointsModel: pointsModel)
                         .tabItem {
                             Image(systemName: "qrcode")
                             Text("QR")
@@ -64,7 +64,7 @@ struct NavigationBar: View {
                             Image(systemName: "bell.fill")
                             Text("Notification")
                         }
-                    ProfileView()
+                    ProfileView(pointsModel: pointsModel)
                         .tabItem {
                             Image(systemName: "person.fill")
                             Text("Profile")
