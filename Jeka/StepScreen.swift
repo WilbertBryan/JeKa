@@ -9,16 +9,11 @@ import SwiftUI
 import Charts
 
 struct StepScreen: View {
-    // Sample data for steps
-    let stepsData: [Step] = [
-        Step(day: "Wed", count: 3000),
-        Step(day: "Thu", count: 5000),
-        Step(day: "Fri", count: 7000),
-        Step(day: "Sat", count: 2000),
-        Step(day: "Sun", count: 4000),
-        Step(day: "Mon", count: 8000),
-        Step(day: "Tue", count: 9000)
-    ]
+    @EnvironmentObject var healthManager: HealthManager
+    @State private var progressStep = UserDefaults.standard.object(forKey: "todayStepCount") ?? "0"
+    @State private var progressCalorie = UserDefaults.standard.object(forKey: "todayCalories") ?? "0"
+    @State private var progressDistance = UserDefaults.standard.object(forKey: "todayDistances") ?? "0"
+    @State private var weeklySteps: [Step] = []
     var body: some View {
         ScrollView{
             VStack{
@@ -37,7 +32,7 @@ struct StepScreen: View {
                     .foregroundColor(Color(UIColor(hex:"#B9B9B9")))
                 
                 Chart {
-                    ForEach(stepsData) { step in
+                    ForEach(weeklySteps) { step in
                         BarMark(
                             x: .value("Day", step.day),
                             y: .value("Steps", step.count)
@@ -67,7 +62,7 @@ struct StepScreen: View {
                                 .font(.title)
                         }
                         HStack{
-                            Text("100 / 10000 Steps")
+                            Text("\(String(describing: progressStep)) / 10000 Steps")
                                 .font(.system(size: 20))
                                 .fontWeight(.light)
                                 .foregroundColor(.white)
@@ -95,7 +90,7 @@ struct StepScreen: View {
                                 .font(.title)
                         }
                         HStack{
-                            Text("100 / 10000 Steps")
+                            Text("\(String(describing: progressCalorie)) Kcal")
                                 .font(.system(size: 20))
                                 .fontWeight(.light)
                                 .foregroundColor(.white)
@@ -122,7 +117,7 @@ struct StepScreen: View {
                                 .font(.title)
                         }
                         HStack{
-                            Text("100 / 10000 Steps")
+                            Text("\(String(describing: progressDistance)) m")
                                 .font(.system(size: 20))
                                 .fontWeight(.light)
                                 .foregroundColor(.white)
@@ -133,7 +128,28 @@ struct StepScreen: View {
                     
                 )
         }
+        .onAppear(){
+            HealthManager().fetchWeeklySteps { steps in
+                    self.weeklySteps = steps
+                }
+        }
+        .onAppear {
+            startTimer()
+        }
         
+    }
+    func startTimer() {
+        Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { _ in
+            HealthManager().fetchTodaySteps()
+            HealthManager().fetchTodayCalories()
+            HealthManager().fetchTodayDistances()
+            progressStep = UserDefaults.standard.string(forKey: "todayStepCount") ?? "0"
+            progressCalorie = UserDefaults.standard.string(forKey: "todayCalories") ?? "0"
+            progressDistance = UserDefaults.standard.string(forKey: "todayDistances") ?? "0"
+            print("ini progress step : \(String(describing: progressStep))")
+            print("ini progress calories : \(String(describing: progressCalorie))")
+            print("ini progress distance : \(String(describing: progressDistance))")
+        }
     }
 }
 struct Step: Identifiable {

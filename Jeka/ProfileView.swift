@@ -4,7 +4,7 @@ struct ProfileView: View {
     @State public var name: String = UserDefaults.standard.string(forKey: "name") ?? "User"
     @State private var navigateToChallenge: Bool = false
     @State private var navigateToStep: Bool = false
-    @StateObject private var pointsModel = PointsModel()
+    @ObservedObject var pointsModel: PointsModel
     var body: some View {
         NavigationView {
             VStack(spacing:20) {
@@ -48,7 +48,7 @@ struct ProfileView: View {
                             Image(systemName: "star.fill")
                                 .font(.largeTitle)
                             Text("Point")
-                            Text("1500P") // point
+                            Text("\(pointsModel.points)P")
                                 .font(.headline)
                         }
                     }
@@ -59,7 +59,7 @@ struct ProfileView: View {
                     .padding(.horizontal) // Add padding to align with the menu
                     
                     // Menu Section
-                    VStack(alignment: .leading, spacing: 10) {
+                    VStack(alignment: .leading, spacing: 5) {
                         
                         // Challenge
                         Button(action: {
@@ -68,12 +68,7 @@ struct ProfileView: View {
                             MenuRow(title: "Challenge")
                         }
 
-                        NavigationLink(destination: Text("Quiz View")) {
-                            MenuRow(title: "Quiz")
-                                
-                            
-                        }
-                        NavigationLink(destination: Challenges(), isActive: $navigateToChallenge) {
+                        NavigationLink(destination: Challenges(pointsModel: pointsModel), isActive: $navigateToChallenge) {
                             EmptyView()
                         }
                         
@@ -84,13 +79,7 @@ struct ProfileView: View {
                             MenuRow(title: "Step")
                                 
                         }
-
-                        NavigationLink(destination: Text("Change Password View")) {
-                            MenuRow(title: "Change Password")
-                            
-                            
-                        }
-                        NavigationLink(destination: Rewards(pointsModel: pointsModel), isActive: $navigateToStep) {
+                        NavigationLink(destination: StepScreen(), isActive: $navigateToStep) {
                             EmptyView()
 
                         }
@@ -133,5 +122,5 @@ struct MenuRow: View {
     }
 }
 #Preview {
-    ProfileView()
+    ProfileView(pointsModel: PointsModel())
 }

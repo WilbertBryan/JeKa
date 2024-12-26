@@ -1,6 +1,8 @@
 import SwiftUI
+import SwiftData
 
 struct Challenges: View {
+    @ObservedObject var pointsModel: PointsModel
     var body: some View {
         let dailyChallenge: [[String]] = [
             ["Do 1000 steps today!", "1000", "50"],
@@ -26,7 +28,7 @@ struct Challenges: View {
                     .fill(Color(UIColor(hex: "#6D9773")))
                     .frame(width: 90, height: 34)
                     .overlay(
-                        Text("1000P").bold()
+                        Text("\(pointsModel.points)P").bold()
                             .foregroundColor(.white)
                             .font(.system(size: 20))
                             .multilineTextAlignment(.center)
@@ -44,26 +46,20 @@ struct Challenges: View {
             VStack(spacing: 15) {
                 // Daily Challenge
                 ForEach(0..<dailyChallenge.count, id: \.self) { index in
-                    ChallengeCard(
-                        title: dailyChallenge[index][0],
-                        totalSteps: Int(dailyChallenge[index][1]) ?? 0,
-                        points: Int(dailyChallenge[index][2]) ?? 0,
-                        backgroundColor: Color.yellow,
-                        pointBackground: Color(hex: "#B36615")
+                    ChallengeCard(pointsModel: pointsModel,
+                                  title: dailyChallenge[index][0],
+                                  totalSteps: Int(dailyChallenge[index][1]) ?? 0,
+                                  points: Int(dailyChallenge[index][2]) ?? 0,
+                                  backgroundColor: Color.yellow,
+                                  pointBackground: Color(hex: "#B36615"),
+                                  index: index,
+                                  category: "daily"
                     )
                 }
-                ChallengeCard(
-                    title: dailyChallenge[0][0],
-                    totalSteps: 0,
-                    points: Int(dailyChallenge[0][2]) ?? 0,
-                    backgroundColor: Color.yellow,
-                    pointBackground: Color(hex: "#B36615"),
-                    isDone: true
-                )
             }
             // .padding(.horizontal)
-            .frame(maxWidth: 340, alignment: .leading)
-            .padding(.leading, 30)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding([.leading, .trailing], 30)
             
             // Weekly Challenges
             Text("Weekly Challenges")
@@ -75,17 +71,19 @@ struct Challenges: View {
             VStack(spacing: 15) {
                 // Weekly Challenge 1 (White with shadow)
                 ForEach(0..<weeklyChallenge.count, id: \.self) { index in
-                    ChallengeCard(
-                        title: weeklyChallenge[index][0],
-                        totalSteps: Int(weeklyChallenge[index][1]) ?? 0,
-                        points: Int(weeklyChallenge[index][2]) ?? 0,
-                        backgroundColor: Color.yellow,
-                        pointBackground: Color(hex: "#B36615")
+                    ChallengeCard(pointsModel: pointsModel,
+                                  title: weeklyChallenge[index][0],
+                                  totalSteps: Int(weeklyChallenge[index][1]) ?? 0,
+                                  points: Int(weeklyChallenge[index][2]) ?? 0,
+                                  backgroundColor: Color.yellow,
+                                  pointBackground: Color(hex: "#B36615"),
+                                  index: index,
+                                  category: "weekly"
                     )
                 }
             }
-            .frame(maxWidth: 340, alignment: .leading)
-            .padding(.leading, 30)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding([.leading, .trailing], 30)
             
             Spacer()
         }
@@ -95,6 +93,9 @@ struct Challenges: View {
 }
 
 struct ChallengeCard: View {
+    @ObservedObject var pointsModel: PointsModel
+    @EnvironmentObject var healthManager: HealthManager
+    
     var title: String
     var totalSteps: Int
     var points: Int
@@ -103,7 +104,14 @@ struct ChallengeCard: View {
     var shadowColor: Color = .clear
     var stepsText: String? = nil
     var isDone: Bool = false
-    var progressStep = Int(UserDefaults.standard.integer(forKey: "todayStepCount"))
+    
+    @State private var progressSTEP = UserDefaults.standard.object(forKey: "todayStepCount") as? String ?? "0"
+    @State private var progressStep:Int = 0
+    
+    var index: Int // untuk cek posisi untuk redeeem
+    var category: String
+    
+    @State private var isRedeemed: Bool = false
     
     // Dynamically determine if the challenge is done
     var isChallengeDone: Bool {
@@ -117,7 +125,28 @@ struct ChallengeCard: View {
     
     // Background color that changes to gray when done
     var cardBackgroundColor: Color {
-        isChallengeDone ? Color.gray.opacity(0.3) : backgroundColor
+        if category == "daily"
+        {
+            if let tempArray = UserDefaults.standard.array(forKey: "dailyChallengeCheck") as? [Int] {
+                // Ensure index is within bounds of the array
+                if tempArray[index] == 1 {
+                    return Color.gray.opacity(0.1)
+                } else {
+                    return isChallengeDone ? backgroundColor : Color.gray.opacity(0.2)
+                }
+            }
+        }
+        else if category == "weekly"
+        {
+            if let tempArray = UserDefaults.standard.array(forKey: "weeklyChallengeCheck") as? [Int] {
+                if tempArray[index] == 1 {
+                    return Color.gray.opacity(0.1)
+                } else {
+                    return isChallengeDone ? backgroundColor : Color.gray.opacity(0.2)
+                }
+            }
+        }
+        return Color.gray.opacity(0.3)
     }
     
     var body: some View {
@@ -128,57 +157,157 @@ struct ChallengeCard: View {
                     .foregroundColor(isChallengeDone ? Color.gray : Color.primary)
                     .frame(maxWidth:.infinity, alignment: .leading)
                 
-                Text("\(progressStep) / \(totalSteps)")
-                    .font(.caption)
-                    .foregroundColor(Color.gray)
-                Spacer()
+                if (progressStep > totalSteps)
+                {
+                    Text("\(totalSteps) / \(totalSteps)")
+                        .font(.caption)
+                        .foregroundColor(Color.gray)
+                } else {
+                    Text("\(progressStep) / \(totalSteps)")
+                        .font(.caption)
+                        .foregroundColor(Color.gray)
+                }
                 
-                // Show points or "DONE"
-                //                Text("\(points)P")
-                //                    .font(.subheadline)
-                //                    .bold()
-                //                    .foregroundColor(.gray)
-                //                    .padding(8)
-                //                    .background(
-                //                        RoundedRectangle(cornerRadius: 10)
-                //                            .fill(Color.clear)
-                //                    )
-                if isChallengeDone { //  redeem action disini
-                    Text("\(points)P")
-                        .font(.subheadline)
-                        .bold()
-                        .foregroundColor(.white)
-                        .padding(8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color(UIColor(hex: "#6D9773")))
-                        )
+                // DAILY
+                if category == "daily" {
+                    if let tempArray = UserDefaults.standard.array(forKey: "dailyChallengeCheck") as? [Int] {
+                        if tempArray[index] != 1 {
+                            if isChallengeDone { //  redeem action disini
+                                Button(action: {
+                                    isRedeemed = true
+                                }) {
+                                    Text("\(points)P")
+                                        .font(.subheadline)
+                                        .bold()
+                                        .foregroundColor(.white)
+                                        .padding(8)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .fill(pointBackground)
+                                        )
+                                }
+                                .alert("You got \(points) points.", isPresented: $isRedeemed) {
+                                    Button("OK") {
+                                        // point nambah
+                                        
+                                        print("dapet \(points) index ke \(index)")
+                                        pointsModel.points += points
+                                        if var dailyChallengeArray = UserDefaults.standard.array(forKey: "dailyChallengeCheck") as? [Int],
+                                           index >= 0 && index < dailyChallengeArray.count {
+                                            dailyChallengeArray[index] = 1 // Update the value at the index
+
+                                            UserDefaults.standard.set(dailyChallengeArray, forKey: "dailyChallengeCheck") // Save it back
+                                        }
+                                        
+                                    }
+                                }
+                            }
+                            else {
+                                Text("\(points)P")
+                                    .font(.callout)
+                                    .bold()
+                                    .foregroundColor(.white)
+                                    .padding(8)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .fill(Color.gray)
+                                    )
+                                
+                            }
+                        }
+                    }
                 }
-                else {
-                    Text("\(points)P")
-                        .font(.callout)
-                        .bold()
-                        .foregroundColor(.white)
-                        .padding(8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(pointBackground)
-                        )
+                // WEEKLY
+                if category == "weekly" {
+                    if let tempArray = UserDefaults.standard.array(forKey: "weeklyChallengeCheck") as? [Int] {
+                        if tempArray[index] != 1 {
+                            if isChallengeDone { //  redeem action disini
+                                Button(action: {
+                                    isRedeemed = true
+                                }) {
+                                    Text("\(points)P")
+                                        .font(.subheadline)
+                                        .bold()
+                                        .foregroundColor(.white)
+                                        .padding(8)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .fill(pointBackground)
+                                        )
+                                }
+                                .alert("You got \(points) points.", isPresented: $isRedeemed) {
+                                    Button("OK") {
+                                        // point nambah
+                                        
+                                        print("dapet \(points) index ke \(index)")
+                                        pointsModel.points += points
+                                        if var weeklyChallengeArray = UserDefaults.standard.array(forKey: "weeklyChallengeCheck") as? [Int],
+                                           index >= 0 && index < weeklyChallengeArray.count {
+                                            weeklyChallengeArray[index] = 1 // Update the value at the index
+                                            UserDefaults.standard.set(weeklyChallengeArray, forKey: "weeklyChallengeCheck") // Save it back
+                                        }
+                                        
+                                    }
+                                }
+                            }
+                            else {
+                                Text("\(points)P")
+                                    .font(.callout)
+                                    .bold()
+                                    .foregroundColor(.white)
+                                    .padding(8)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .fill(Color.gray)
+                                    )
+                            }
+                        }
+                    }
+                }
+                
+            }
+            //            if let stepsText = stepsText {
+            //                Text(stepsText)
+            //                    .font(.subheadline)
+            //                    .foregroundColor(.gray)
+            //            }
+            
+            if category == "daily"{
+                if let tempArray = UserDefaults.standard.array(forKey: "dailyChallengeCheck") as? [Int] {
+                    if tempArray[index] == 0 {
+                        ProgressView(value: progress, total: 1)
+                            .progressViewStyle(LinearProgressViewStyle(tint: Color.red))
+                    }
                 }
             }
-            if let stepsText = stepsText {
-                Text(stepsText)
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
+            if category == "weekly"
+            {
+                if let tempArray = UserDefaults.standard.array(forKey: "weeklyChallengeCheck") as? [Int] {
+                    if tempArray[index] == 0 {
+                        ProgressView(value: progress, total: 1)
+                            .progressViewStyle(LinearProgressViewStyle(tint: Color.red))
+                    }
+                }
             }
-            ProgressView(value: progress)
-                .progressViewStyle(LinearProgressViewStyle(tint: isChallengeDone ? Color.gray : Color.red))
+            
+                    
         }
         .padding()
-        .background(cardBackgroundColor)  // Use the conditional background color
+        .background(cardBackgroundColor)
         .cornerRadius(10)
         .shadow(color: shadowColor, radius: 5, x: 0, y: 2)
-    }                                                         
+        .onAppear {
+            // Clean the string and convert it to an integer when the view appears
+            let cleanedString = progressSTEP.replacingOccurrences(of: ",", with: "")
+            if let intValue = Int(cleanedString) {
+                progressStep = intValue
+            } else {
+                progressStep = 0 // Default to 0 if conversion fails
+                print("fail")
+            }
+        }
+    }
+    
 }
 
 
@@ -269,5 +398,5 @@ extension Color {
 }
 
 #Preview {
-    Challenges()
+    Challenges(pointsModel: PointsModel())
 }

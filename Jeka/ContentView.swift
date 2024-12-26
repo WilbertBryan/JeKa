@@ -141,10 +141,8 @@ struct HomeView: View {
     
     // for challenge
     @State private var navigateToChallenge: Bool = false
-    
+    @State private var countCompletedChallenge = 0
   
-    
-    
     var body: some View {
         NavigationView{
             //            ScrollView{
@@ -230,8 +228,8 @@ struct HomeView: View {
                                         }
                                     }
                                 } .padding(.top, -10)
-                            } .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.leading, 30)
+                            }  .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding([.leading, .trailing], 30)
                         )
                 }
                         .padding(.bottom, 10)
@@ -258,18 +256,18 @@ struct HomeView: View {
                                             .foregroundColor(.white)
                                             .font(.title)
                                     }
-                                    Text("0 / 5")
+                                    Text("\(countCompletedChallenge) / 5")
                                         .font(.system(size: 20))
                                         .fontWeight(.light)
                                         .foregroundColor(.white)
                                         .padding(.top, -10)
                                     
-                                } .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(.leading, 30)
+                                }  .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding([.leading, .trailing], 30)
                             )
                             .padding(.bottom, 10)
                     }
-                    NavigationLink(destination: Challenges(), isActive: $navigateToChallenge) {
+                    NavigationLink(destination: Challenges(pointsModel: pointsModel), isActive: $navigateToChallenge) {
                         EmptyView()
                     }
                     
@@ -303,12 +301,12 @@ struct HomeView: View {
                                         .foregroundColor(.white)
                                         .padding(.top, -10)
                                     
-                                } .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(.leading, 30)
+                                }  .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding([.leading, .trailing], 30)
                             )
                             .padding(.bottom, 10)
                     }
-                    NavigationLink(destination: Quiz(isQuizComplete: $isQuizComplete), isActive: $navigateToQuiz) {
+                    NavigationLink(destination: Quiz(isQuizComplete: $isQuizComplete, pointsModel: pointsModel), isActive: $navigateToQuiz) {
                         EmptyView()
                     }
                 }
@@ -337,31 +335,62 @@ struct HomeView: View {
                     UserDefaults.standard.set(inputName, forKey: "name")
                     name = inputName
                     noName = false
+                    
+                    let dailyChallengeArray = [0, 0, 0]
+                    let weeklyChallengeArray = [0, 0]
+                    UserDefaults.standard.set(dailyChallengeArray, forKey: "dailyChallengeCheck")
+                    UserDefaults.standard.set(weeklyChallengeArray, forKey: "weeklyChallengeCheck")
                 }
             }
         }
-        .onAppear(perform : checkDailyReset) // krna ini
+        .onAppear(perform : checkDailyReset)
         .onAppear {
             if UserDefaults.standard.string(forKey: "name")?.isEmpty ?? true {
                 noName = true
             }
+            countCompleted(from: "weeklyChallengeCheck")
+            countCompleted(from: "dailyChallengeCheck")
         }
         .onAppear {
             startTimer()
         }
     }
     
-    
     private func checkDailyReset() {
         let lastCompletionDate = UserDefaults.standard.object(forKey: "LastQuizCompletionDate") as? Date
         print(lastCompletionDate)
         if isNewDay(from: lastCompletionDate) {
+            let dailyChallengeArray = [0, 0, 0]
+
             isQuizComplete = false
+            UserDefaults.standard.set(dailyChallengeArray, forKey: "dailyChallengeCheck")
         } else if  Calendar.current.isDateInToday(lastCompletionDate!) {
             isQuizComplete = true
         }
+        
+        // WeeklyChallenge reset
+          let lastWeeklyResetDate = UserDefaults.standard.object(forKey: "LastWeeklyResetDate") as? Date
+          let today = Date()
+          let calendar = Calendar.current
+
+          // Check if today is Monday and the week has not been reset yet
+        if calendar.component(.weekday, from: today) == 2, // 2 = Monday in Calendar
+           lastWeeklyResetDate == nil || !calendar.isDate(lastWeeklyResetDate!, equalTo: today, toGranularity: .weekOfYear) {
+            let weeklyChallengeArray = [0, 0]
+            UserDefaults.standard.set(weeklyChallengeArray, forKey: "weeklyChallengeCheck")
+            UserDefaults.standard.set(today, forKey: "LastWeeklyResetDate")
+        }
     }
     
+    private func countCompleted(from key: String) {
+        if let tempArray = UserDefaults.standard.array(forKey: key) as? [NSNumber] {
+                let intArray = tempArray.map { $0.intValue } // Convert NSNumber to Int
+                countCompletedChallenge += intArray.filter { $0 == 1 }.count
+            print(tempArray)
+            } else {
+                print("Array for key \(key) not found or invalid.")
+            }
+    }
     
     
     //    var body: some View {
