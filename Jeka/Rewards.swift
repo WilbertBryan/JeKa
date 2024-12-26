@@ -46,40 +46,58 @@ struct Rewards: View {
     }
 
     var body: some View {
-        VStack {
-            headerView
-            categoryButtons
-            rewardList
-            if showingRedeemSuccess {
-                VStack {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 120))
-                        .foregroundColor(.green)
-                        .padding()
-                    Text("Redeemed Successfully")
-                        .font(.title)
-                        .foregroundColor(.green)
-                }.frame(maxWidth: .infinity, maxHeight: .infinity)
+        ZStack{
+            VStack {
+                headerView
+                categoryButtons
+                rewardList
+                
             }
-        }
-        .onAppear {
-//                    loadRedeemedVouchers()
+            .onAppear {
+                    loadRedeemedVouchers()
+            }
+            .alert(isPresented: $showingInsufficientPointsAlert) {
+                Alert(title: Text("Insufficient Points"), message: Text("You do not have enough points to redeem this voucher."), dismissButton: .default(Text("OK")))
+            }
+            .alert("Are you sure?", isPresented: $showingConfirmation) {
+                Button("Cancel", role: .cancel) { }
+                Button("Confirm") {
+                    if let voucher = selectedVoucher {
+                        redeemVoucher(voucher: voucher, context: context)
+                    }
                 }
-        .alert(isPresented: $showingInsufficientPointsAlert) {
-            Alert(title: Text("Insufficient Points"), message: Text("You do not have enough points to redeem this voucher."), dismissButton: .default(Text("OK")))
-        }
-        .alert("Are you sure?", isPresented: $showingConfirmation) {
-            Button("Cancel",role: .cancel) { }
-            Button("Confirm") {
+            } message: {
                 if let voucher = selectedVoucher {
-                    redeemVoucher(voucher: voucher, context: context)
+                    Text("Are you sure you want to redeem '\(voucher.name)' for \(voucher.points) points?")
                 }
             }
-        } message: {
-            if let voucher = selectedVoucher {
-                Text("Are you sure you want to redeem '\(voucher.name)' for \(voucher.points) points?")
-            }
-        }
+            if showingRedeemSuccess {
+                        GeometryReader { geometry in
+                            VStack {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .font(.system(size: 120))
+                                    .foregroundColor(.green)
+                                    .padding()
+                                Text("Redeemed Successfully")
+                                    .font(.title)
+                                    .foregroundColor(.green)
+                            }
+                            .frame(width: geometry.size.width * 0.8, height: geometry.size.height * 0.5)  // Dynamically adjust width and height
+                            .background(Color.white)  // Optional background color
+                            .cornerRadius(12)  // Apply corner radius
+                            .shadow(radius: 10)  // Optional shadow for visibility
+                            .padding(40)  // Optional padding from edges
+                            .transition(.opacity)  // Use opacity transition
+                            .animation(.easeInOut, value: showingRedeemSuccess)
+                            .zIndex(1)  // Ensure it appears on top
+                            .position(x: geometry.size.width / 2, y: geometry.size.height / 2)  // Center the message
+                        }
+                    }
+        }.padding(.horizontal)
+
+        
+        
+        
     }
 
     private var headerView: some View {
@@ -211,6 +229,7 @@ struct Rewards: View {
                 }
                 .padding(.horizontal)
             }.padding(.bottom)
+               
         }
         .buttonStyle(PlainButtonStyle())
         .disabled(voucher.isRedeemed) // Disable tombol jika voucher sudah diredeem
@@ -226,23 +245,24 @@ struct Rewards: View {
         selectedVoucher = nil
         showingRedeemSuccess = true
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             showingRedeemSuccess = false
         }
+        
     }
     
-//    private func loadRedeemedVouchers() {
-//            let redeemedNames = UserDefaults.standard.stringArray(forKey: redeemedKey) ?? []
-//            vouchers.removeAll { redeemedNames.contains($0.name) }
-//        }
-//
-//    private func saveRedeemedVoucher(name: String) {
-//        var redeemedNames = UserDefaults.standard.stringArray(forKey: redeemedKey) ?? []
-//        if !redeemedNames.contains(name) {
-//            redeemedNames.append(name)
-//            UserDefaults.standard.set(redeemedNames, forKey: redeemedKey)
-//        }
-//    }
+    private func loadRedeemedVouchers() {
+            let redeemedNames = UserDefaults.standard.stringArray(forKey: redeemedKey) ?? []
+            vouchers.removeAll { redeemedNames.contains($0.name) }
+        }
+
+    private func saveRedeemedVoucher(name: String) {
+        var redeemedNames = UserDefaults.standard.stringArray(forKey: redeemedKey) ?? []
+        if !redeemedNames.contains(name) {
+            redeemedNames.append(name)
+            UserDefaults.standard.set(redeemedNames, forKey: redeemedKey)
+        }
+    }
     
     func saveVoucher(name: String, redeemedPoints: Int, category: String, context: ModelContext) {
         let newVoucher = RedeemedVoucher(name: name, redeemedPoints: redeemedPoints, category: category)
