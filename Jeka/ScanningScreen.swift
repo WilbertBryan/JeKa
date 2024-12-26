@@ -8,6 +8,7 @@ struct ScanningScreen: View {
     @State private var showAlert: Bool = false // Manage alert visibility
     @State private var scannerCoordinator: ScannerView.Coordinator? // To access the coordinator and restart scanning
     @ObservedObject var pointsModel: PointsModel
+    @Environment(\.modelContext) private var context
     var body: some View {
         ZStack(alignment: .bottom) {
             ScannerView(scannedString: $scannedString, showAlert: $showAlert, scannerCoordinator: $scannerCoordinator)
@@ -26,6 +27,8 @@ struct ScanningScreen: View {
                 dismissButton: .default(Text("Done")) {
                     // Safely attempt to convert the scannedString to an integer
                     if let points = Int(scannedString) {
+                        let newPoint = GetPoints(recievePoints: points)
+                        context.insert(newPoint)
                         pointsModel.points += points // Update points
                     } else {
                         print("Error: scannedString is not a valid number")

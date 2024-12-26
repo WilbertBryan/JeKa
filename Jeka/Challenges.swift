@@ -95,7 +95,7 @@ struct Challenges: View {
 struct ChallengeCard: View {
     @ObservedObject var pointsModel: PointsModel
     @EnvironmentObject var healthManager: HealthManager
-    
+    @Environment(\.modelContext) private var context
     var title: String
     var totalSteps: Int
     var points: Int
@@ -191,6 +191,8 @@ struct ChallengeCard: View {
                                         // point nambah
                                         
                                         print("dapet \(points) index ke \(index)")
+                                        let newPoint = GetPoints(recievePoints: points)
+                                        context.insert(newPoint)
                                         pointsModel.points += points
                                         if var dailyChallengeArray = UserDefaults.standard.array(forKey: "dailyChallengeCheck") as? [Int],
                                            index >= 0 && index < dailyChallengeArray.count {
@@ -240,6 +242,8 @@ struct ChallengeCard: View {
                                         // point nambah
                                         
                                         print("dapet \(points) index ke \(index)")
+                                        let newPoint = GetPoints(recievePoints: points)
+                                        context.insert(newPoint)
                                         pointsModel.points += points
                                         if var weeklyChallengeArray = UserDefaults.standard.array(forKey: "weeklyChallengeCheck") as? [Int],
                                            index >= 0 && index < weeklyChallengeArray.count {
@@ -400,3 +404,4 @@ extension Color {
 #Preview {
     Challenges(pointsModel: PointsModel())
 }
+

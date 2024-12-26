@@ -45,7 +45,7 @@ struct Quiz: View {
     @Binding var isQuizComplete: Bool
     @ObservedObject var pointsModel: PointsModel
     @State private var point = 0
-    
+    @Environment(\.modelContext) private var context
     var body: some View {
         //            if isQuizComplete {
         //                           // Display QuizComplete view when the quiz is finished
@@ -144,6 +144,8 @@ struct Quiz: View {
                                 .alert("Your correct answer is \(countCorrect). \(point) is rewarded", isPresented: $isQuizComplete) {
                                     Button("OK") {
                                         navigateToHome = true
+                                        let newPoint =  GetPoints(recievePoints: point)
+                                        context.insert(newPoint)
                                         pointsModel.points += point
                                     }
                                 }

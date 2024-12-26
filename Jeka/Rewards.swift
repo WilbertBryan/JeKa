@@ -54,7 +54,7 @@ struct Rewards: View {
                 
             }
             .onAppear {
-                    loadRedeemedVouchers()
+                loadRedeemedVouchers()
             }
             .alert(isPresented: $showingInsufficientPointsAlert) {
                 Alert(title: Text("Insufficient Points"), message: Text("You do not have enough points to redeem this voucher."), dismissButton: .default(Text("OK")))
@@ -178,11 +178,73 @@ struct Rewards: View {
         }
     }
 
+//    private func rewardItemView(voucher: (name: String, description: String, points: Int, category: Category, isRedeemed: Bool, images: String)) -> some View {
+//        Button(action: {
+//            if pointsModel.points >= voucher.points {
+//                selectedVoucher = voucher
+//                showingConfirmation.toggle()
+//            } else {
+//                showingInsufficientPointsAlert.toggle()
+//            }
+//        }) {
+//            ZStack {
+//                RoundedRectangle(cornerRadius: 15)
+//                    .fill(voucher.isRedeemed ? Color.gray.opacity(0.5) : Color.white)
+//                    .frame(width: 376, height: 98)
+//                    .shadow(color: .black.opacity(0.1), radius: 5, x: 2, y: 2)
+//
+//                HStack {
+//                    Image("\(voucher.images)")
+//                        .resizable()
+//                        .scaledToFill()
+//                        .frame(width: 63, height: 63)
+//                        .clipShape(Circle()) // Pastikan gambar berbentuk lingkaran
+//                            .overlay(
+//                                Circle().stroke(Color.white, lineWidth: 2) // Opsional: Tambahkan border putih
+//                            )
+//                        .padding()
+//
+//                    Divider()
+//                        .frame(width: 1)
+//
+//                    VStack(alignment: .leading) {
+//                        Text(voucher.name)
+//                            .font(.system(size: 18))
+//                            .foregroundColor(voucher.isRedeemed ? .gray : .black)
+//
+//                        Text(voucher.description)
+//                            .font(.system(size: 10))
+//                            .foregroundColor(voucher.isRedeemed ? .gray : .gray)
+//                    }
+//                    .frame(width: 157, alignment: .leading)
+//
+//                    Spacer()
+//
+//                    Text("\(voucher.points)P")
+//                        .font(.system(size: 14))
+//                        .foregroundColor(voucher.isRedeemed ? .gray : .black)
+//                        .frame(width: 70, height: 19)
+//                        .background(voucher.isRedeemed ? Color.gray.opacity(0.5) : Color(UIColor(hex: "FFBA00")))
+//                        .cornerRadius(5)
+//                }
+//                .padding(.horizontal)
+//            }.padding(.bottom)
+//               
+//        }
+//        .buttonStyle(PlainButtonStyle())
+//        .disabled(voucher.isRedeemed) // Disable tombol jika voucher sudah diredeem
+//    }
+
     private func rewardItemView(voucher: (name: String, description: String, points: Int, category: Category, isRedeemed: Bool, images: String)) -> some View {
         Button(action: {
             if pointsModel.points >= voucher.points {
-                selectedVoucher = voucher
-                showingConfirmation.toggle()
+                if isVoucherRedeemed(voucher: voucher) {
+                    // Show an alert or feedback saying the voucher has already been redeemed
+                    showingInsufficientPointsAlert.toggle()
+                } else {
+                    selectedVoucher = voucher
+                    showingConfirmation.toggle()
+                }
             } else {
                 showingInsufficientPointsAlert.toggle()
             }
@@ -229,35 +291,49 @@ struct Rewards: View {
                 }
                 .padding(.horizontal)
             }.padding(.bottom)
-               
         }
         .buttonStyle(PlainButtonStyle())
-        .disabled(voucher.isRedeemed) // Disable tombol jika voucher sudah diredeem
+        
+    }
+
+    private func isVoucherRedeemed(voucher: (name: String, description: String, points: Int, category: Category, isRedeemed: Bool, images: String)) -> Bool {
+        let redeemedNames = UserDefaults.standard.stringArray(forKey: redeemedKey) ?? []
+        return redeemedNames.contains(voucher.name)
     }
 
     func redeemVoucher(voucher: (name: String, description: String, points: Int, category: Category, isRedeemed: Bool, images: String), context: ModelContext) {
+        if isVoucherRedeemed(voucher: voucher) {
+            showingInsufficientPointsAlert.toggle()
+            return
+        }
+
         pointsModel.points -= voucher.points
         saveVoucher(name: voucher.name, redeemedPoints: voucher.points, category: voucher.category.rawValue, context: context)
-//        saveRedeemedVoucher(name: voucher.name)
+        saveRedeemedVoucher(name: voucher.name)  // Save the voucher as redeemed
+
+        // Remove the redeemed voucher from the list
         if let index = vouchers.firstIndex(where: { $0.name == voucher.name }) {
-                vouchers.remove(at: index)
-            }
+            vouchers.remove(at: index)  // Remove the voucher after redemption
+        }
+
         selectedVoucher = nil
         showingRedeemSuccess = true
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             showingRedeemSuccess = false
         }
-        
     }
+
+
     
     private func loadRedeemedVouchers() {
-            let redeemedNames = UserDefaults.standard.stringArray(forKey: redeemedKey) ?? []
-            vouchers.removeAll { redeemedNames.contains($0.name) }
-        }
+        let redeemedNames = UserDefaults.standard.stringArray(forKey: redeemedKey) ?? []
+        vouchers.removeAll { redeemedNames.contains($0.name) }
+    }
 
     private func saveRedeemedVoucher(name: String) {
         var redeemedNames = UserDefaults.standard.stringArray(forKey: redeemedKey) ?? []
+        
         if !redeemedNames.contains(name) {
             redeemedNames.append(name)
             UserDefaults.standard.set(redeemedNames, forKey: redeemedKey)

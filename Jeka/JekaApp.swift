@@ -43,7 +43,8 @@ class RedeemedVoucher {
         self.dateRedeemed = dateRedeemed
     }
 }
-class GetVoucher{
+@Model
+class GetPoints{
     @Attribute(.unique) var getId : UUID
     var recievePoints: Int
     var dateReceived: Date
@@ -62,9 +63,8 @@ struct JekaApp: App {
     var body: some Scene {
         WindowGroup {
             LoadingScreen()
-
-                .modelContainer(for: [RedeemedVoucher.self])
-                .environmentObject(healthManager)
+                .modelContainer(for: [RedeemedVoucher.self, GetPoints.self]) 
+                                .environmentObject(healthManager)
         }
     }
 }
