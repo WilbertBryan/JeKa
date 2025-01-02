@@ -306,8 +306,15 @@ struct ChallengeCard: View {
             if let intValue = Int(cleanedString) {
                 progressStep = intValue
             } else {
-                progressStep = 0 // Default to 0 if conversion fails
-                print("fail")
+                let cleanedString = progressSTEP.replacingOccurrences(of: ".", with: "")
+                if let intValue = Int(cleanedString) {
+                    progressStep = intValue
+                }
+                else{
+                    progressStep = 0 // Default to 0 if conversion fails
+                    print("fail")
+                }
+                
             }
         }
     }
