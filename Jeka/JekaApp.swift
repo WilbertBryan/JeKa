@@ -32,15 +32,17 @@ class RedeemedVoucher {
     var name: String                 // Nama voucher
     var redeemedPoints: Int                  // Poin yang digunakan
     var category: String             // Kategori voucher
-    var dateRedeemed: Date           // Waktu voucher diredeem
+    var dateRedeemed: Date
+    var imageName: String// Waktu voucher diredeem
 
     // Initializer untuk membuat instance baru
-    init(id: UUID = UUID(), name: String, redeemedPoints: Int, category: String, dateRedeemed: Date = Date()) {
+    init(id: UUID = UUID(), name: String, redeemedPoints: Int, category: String, dateRedeemed: Date = Date(), imageName: String) {
         self.id = id
         self.name = name
         self.redeemedPoints = redeemedPoints
         self.category = category
         self.dateRedeemed = dateRedeemed
+        self.imageName = imageName
     }
 }
 @Model
@@ -64,7 +66,7 @@ struct JekaApp: App {
         WindowGroup {
             LoadingScreen()
                 .modelContainer(for: [RedeemedVoucher.self, GetPoints.self]) 
-                                .environmentObject(healthManager)
+                .environmentObject(healthManager)
         }
     }
 }

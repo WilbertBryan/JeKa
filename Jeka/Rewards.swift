@@ -308,9 +308,10 @@ struct Rewards: View {
         }
 
         pointsModel.points -= voucher.points
-        saveVoucher(name: voucher.name, redeemedPoints: voucher.points, category: voucher.category.rawValue, context: context)
+        saveVoucher(name: voucher.name, redeemedPoints: voucher.points, category: voucher.category.rawValue, context: context, images: voucher.images)
         saveRedeemedVoucher(name: voucher.name)  // Save the voucher as redeemed
-
+        let updatedVouchers = fetchRedeemedVouchers(context: context)
+            print("Redeemed Vouchers:", updatedVouchers)
         // Remove the redeemed voucher from the list
         if let index = vouchers.firstIndex(where: { $0.name == voucher.name }) {
             vouchers.remove(at: index)  // Remove the voucher after redemption
@@ -340,15 +341,14 @@ struct Rewards: View {
         }
     }
     
-    func saveVoucher(name: String, redeemedPoints: Int, category: String, context: ModelContext) {
-        let newVoucher = RedeemedVoucher(name: name, redeemedPoints: redeemedPoints, category: category)
+    func saveVoucher(name: String, redeemedPoints: Int, category: String, context: ModelContext, images: String) {
+        let newVoucher = RedeemedVoucher(name: name, redeemedPoints: redeemedPoints, category: category, imageName: images)
         context.insert(newVoucher)
-        
         do {
             try context.save()
             print("Voucher \(name) berhasil disimpan.")
         } catch {
-            print("Gagal menyimpan voucher: \(error)")
+            print("Gagal menyimpan voucher: \(error.localizedDescription)")
         }
     }
     func fetchRedeemedVouchers(context: ModelContext) -> [RedeemedVoucher] {

@@ -1,9 +1,11 @@
 import SwiftUI
-
+import SwiftData
 struct ProfileView: View {
     @State public var name: String = UserDefaults.standard.string(forKey: "name") ?? "User"
     @State private var navigateToChallenge: Bool = false
     @State private var navigateToStep: Bool = false
+    @Query private var redeemedvoucher: [RedeemedVoucher]
+    
     @ObservedObject var pointsModel: PointsModel
     var body: some View {
         NavigationView {
@@ -36,11 +38,18 @@ struct ProfileView: View {
                     // Voucher and Points Section
                     HStack(spacing: 75) {
                         VStack {
-                            Image(systemName: "rectangle.and.pencil.and.ellipsis")
-                                .font(.largeTitle)
-                            Text("Voucher")
-                            Text("150")
-                                .font(.headline)
+                            NavigationLink(destination: Vouchers()){
+                                VStack {
+                                    Image(systemName: "rectangle.and.pencil.and.ellipsis")
+                                        .font(.largeTitle)
+                                    Text("Voucher")
+                                    
+                                    Text("\(redeemedvoucher.count)")
+                                    .font(.headline)
+                                }
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            
                         }
                         Divider()
                             .frame(height: 75)
