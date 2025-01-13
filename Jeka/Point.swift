@@ -17,7 +17,6 @@ class PointsModel: ObservableObject {
        
     init() {
         // Ambil nilai dari UserDefaults atau gunakan nilai default 500
-        let savedPoints = UserDefaults.standard.object(forKey: "pointsKey") as? Int
-        self.points = savedPoints ?? 50
+        self.points = UserDefaults.standard.object(forKey: "pointsKey") as? Int ?? 0
     }
 }

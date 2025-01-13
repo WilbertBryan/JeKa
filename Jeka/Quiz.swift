@@ -58,7 +58,7 @@ struct Quiz: View {
             
             let question = ["What is the capital of France?",
                             "Who wrote the play 'Romeo and Juliet'?",
-                            "Which planet is known as the Red dssadadanshdbhasbdhjsbdhjasbdhjabhdjbshjkdbdahsjbdjasbdjksabdjkbsa Planet?"]
+                            "Which planet is known as the Red Planet?"]
             
             let answers: [[String]] = [
                 ["Paris", "London", "Berlin", "Madrid"],

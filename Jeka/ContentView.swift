@@ -256,7 +256,7 @@ struct HomeView: View {
                                             .foregroundColor(.white)
                                             .font(.title)
                                     }
-                                    Text("\(countCompletedChallenge) / 5")
+                                    Text("View your challenges")
                                         .font(.system(size: 20))
                                         .fontWeight(.light)
                                         .foregroundColor(.white)
