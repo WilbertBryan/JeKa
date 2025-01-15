@@ -45,6 +45,7 @@ struct Quiz: View {
     @Binding var isQuizComplete: Bool
     @ObservedObject var pointsModel: PointsModel
     @State private var point = 0
+    @State private var text = ""
     @Environment(\.modelContext) private var context
     var body: some View {
         //            if isQuizComplete {
@@ -55,18 +56,17 @@ struct Quiz: View {
             HomeView(pointsModel: pointsModel)
                 .navigationBarBackButtonHidden(true)
         } else {
-            
-            let question = ["What is the capital of France?",
-                            "Who wrote the play 'Romeo and Juliet'?",
-                            "Which planet is known as the Red Planet?"]
-            
-            let answers: [[String]] = [
-                ["Paris", "London", "Berlin", "Madrid"],
-                ["William Shakespeare", "Charles Dickens", "Mark Twain", "Oscar Wilde"],
-                ["Mars", "Venus", "Jupiter", "Saturn"]
-            ]
-            
-            let correctAnswer = ["London", "Mark Twain", "Mars"]
+            let question = ["Apa kebiasaan hemat energi yang baik untuk mengurangi jejak karbon di rumah?",
+                                        "Apa yang bisa dilakukan dengan sampah organik untuk mengurangi emisi karbon?",
+                                        "Apa kebiasaan mencuci yang dapat mengurangi emisi karbon?"]
+                        
+                        let answers: [[String]] = [
+                            ["Membiarkan lampu menyala meski ruangan kosong", "Menggunakan lampu LED hemat energi", "Menggunakan peralatan rumah tangga tua yang boros energi", "Menyalakan lampu pada siang hari"],
+                            ["Membiarkan sampah menumpuk di tempat sampah", "Mengubur sampah di halaman belakang", "Membuat kompos dari sampah organik", "Menimbun sampah di selokan"],
+                            ["Mencuci dengan air dingin dan mengeringkan pakaian secara alami", "Menggunakan air panas dan pengering mesin setiap saat", "Mencuci pakaian sedikit demi sedikit dengan mesin cuci penuh", "Mencuci pakaian di pagi, siang, dan sore hari"]
+                        ]
+
+            let correctAnswer = ["Menggunakan lampu LED hemat energi", "Membuat kompos dari sampah organik", "Mencuci dengan air dingin dan mengeringkan pakaian secara alami"]
             
             let answerLetters = ["A", "B", "C", "D"]
             
@@ -128,9 +128,14 @@ struct Quiz: View {
                                     selectedAnswerIndex = nil // Reset selected answer
                                     isAnswerSelected = false
                                 } else{
+                                    if(countCorrect > 0){
+                                        text = "You guessed \(countCorrect) correctly. You are rewarded \(point) points."
+                                    } else
+                                    {
+                                        text = "You guessed 0 correctly. Try again tomorrow."
+                                    }
                                     isQuizComplete = true
                                     UserDefaults.standard.set(Date(), forKey: "LastQuizCompletionDate")
-                                    
                                 }
                             }) {
                                 Text("Next")
@@ -141,7 +146,7 @@ struct Quiz: View {
                                     .cornerRadius(10)
                                 
                             } .disabled(selectedAnswerIndex == nil) // Disable "Next" until an answer is selected
-                                .alert("Your correct answer is \(countCorrect). \(point) is rewarded", isPresented: $isQuizComplete) {
+                                .alert(text, isPresented: $isQuizComplete) {
                                     Button("OK") {
                                         navigateToHome = true
                                         let newPoint =  GetPoints(recievePoints: point)

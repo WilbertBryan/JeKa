@@ -197,8 +197,10 @@ struct ChallengeCard: View {
                                         if var dailyChallengeArray = UserDefaults.standard.array(forKey: "dailyChallengeCheck") as? [Int],
                                            index >= 0 && index < dailyChallengeArray.count {
                                             dailyChallengeArray[index] = 1 // Update the value at the index
-
                                             UserDefaults.standard.set(dailyChallengeArray, forKey: "dailyChallengeCheck") // Save it back
+//                                            print("ini cek array", UserDefaults.standard.array(forKey: "dailyChallengeCheck"))
+                                            UserDefaults.standard.set(Date(), forKey: "LastChallengeCompletion")
+
                                         }
                                         
                                     }
@@ -318,7 +320,7 @@ struct ChallengeCard: View {
             }
         }
     }
-    
+       
 }
 
 

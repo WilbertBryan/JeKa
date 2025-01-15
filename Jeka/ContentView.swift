@@ -348,22 +348,27 @@ struct HomeView: View {
             if UserDefaults.standard.string(forKey: "name")?.isEmpty ?? true {
                 noName = true
             }
-            countCompleted(from: "weeklyChallengeCheck")
-            countCompleted(from: "dailyChallengeCheck")
+        //    countCompleted(from: "weeklyChallengeCheck")
+        //    countCompleted(from: "dailyChallengeCheck")
         }
         .onAppear {
             startTimer()
+        }
+        .onAppear{
+            print("ini cek array di HOME", UserDefaults.standard.array(forKey: "dailyChallengeCheck"))
         }
     }
     
     private func checkDailyReset() {
         let lastCompletionDate = UserDefaults.standard.object(forKey: "LastQuizCompletionDate") as? Date
-        print(lastCompletionDate)
-        if isNewDay(from: lastCompletionDate) {
-            let dailyChallengeArray = [0, 0, 0]
+        let lastChallengeCompletionDate = UserDefaults.standard.object(forKey: "LastChallengeCompletion") as? Date
 
-            isQuizComplete = false
+        if isNewDay(from: lastChallengeCompletionDate) {
+            let dailyChallengeArray = [0, 0, 0]
             UserDefaults.standard.set(dailyChallengeArray, forKey: "dailyChallengeCheck")
+        }
+        if isNewDay(from: lastCompletionDate) {
+            isQuizComplete = false
         } else if  Calendar.current.isDateInToday(lastCompletionDate!) {
             isQuizComplete = true
         }
