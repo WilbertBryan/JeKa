@@ -17,7 +17,8 @@ struct AnswerButton: View {
             RoundedRectangle(cornerRadius: 10)
                 .fill(isSelected ? Color(UIColor(hex: "#6D9773")) : Color(UIColor(hex: "#FFFFFF"))) // Change color if selected
                 .shadow(color: Color(UIColor(hex: "#6D9773")), radius: 6, x: 2, y: 4)
-                .frame(width: 300, height: 55)
+                .frame(maxWidth: 300, minHeight: 55)
+                
                 .overlay(
                     HStack {
                         Text(letter + ".")
@@ -30,6 +31,7 @@ struct AnswerButton: View {
                             .multilineTextAlignment(.leading)
                     }
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        
                         .padding(.leading)
                 )
         }
@@ -93,13 +95,16 @@ struct Quiz: View {
                                 .padding(.leading)
                                 .padding(.bottom)
                             
-                            Text(question[count]).bold()
-                                .font(.title)
-                                .foregroundColor(.black)
-                                .font(.system(size: 20))
-                                .multilineTextAlignment(.leading)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.leading)
+                            Text(question[count])
+                                    .bold()
+//                                    .font(.title)
+                                    .foregroundColor(.black)
+                                    .font(.system(size: 24))
+                                    .multilineTextAlignment(.leading)
+                                    .lineLimit(nil)  // Allow the text to span multiple lines
+                                    .fixedSize(horizontal: false, vertical: true)  // Allow vertical expansion
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.leading)
                             
                             // Answer Options
                             ForEach(0..<answers[count].count, id: \.self) { index in

@@ -175,7 +175,7 @@ struct HomeView: View {
                         .frame(width: 280, height: 280)
                         .clipShape(Circle())
                     
-                    Text("With walking you reduce carbon emission").bold()
+                    Text("Let's Show Your Commitment To Reducing Your Carbon Footprint").bold()
                         .font(.system(size: 32))
                         .multilineTextAlignment(.center)
                     

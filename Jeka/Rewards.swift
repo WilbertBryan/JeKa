@@ -177,124 +177,72 @@ struct Rewards: View {
             }.padding()
         }
     }
-
-//    private func rewardItemView(voucher: (name: String, description: String, points: Int, category: Category, isRedeemed: Bool, images: String)) -> some View {
-//        Button(action: {
-//            if pointsModel.points >= voucher.points {
-//                selectedVoucher = voucher
-//                showingConfirmation.toggle()
-//            } else {
-//                showingInsufficientPointsAlert.toggle()
-//            }
-//        }) {
-//            ZStack {
-//                RoundedRectangle(cornerRadius: 15)
-//                    .fill(voucher.isRedeemed ? Color.gray.opacity(0.5) : Color.white)
-//                    .frame(width: 376, height: 98)
-//                    .shadow(color: .black.opacity(0.1), radius: 5, x: 2, y: 2)
-//
-//                HStack {
-//                    Image("\(voucher.images)")
-//                        .resizable()
-//                        .scaledToFill()
-//                        .frame(width: 63, height: 63)
-//                        .clipShape(Circle()) // Pastikan gambar berbentuk lingkaran
-//                            .overlay(
-//                                Circle().stroke(Color.white, lineWidth: 2) // Opsional: Tambahkan border putih
-//                            )
-//                        .padding()
-//
-//                    Divider()
-//                        .frame(width: 1)
-//
-//                    VStack(alignment: .leading) {
-//                        Text(voucher.name)
-//                            .font(.system(size: 18))
-//                            .foregroundColor(voucher.isRedeemed ? .gray : .black)
-//
-//                        Text(voucher.description)
-//                            .font(.system(size: 10))
-//                            .foregroundColor(voucher.isRedeemed ? .gray : .gray)
-//                    }
-//                    .frame(width: 157, alignment: .leading)
-//
-//                    Spacer()
-//
-//                    Text("\(voucher.points)P")
-//                        .font(.system(size: 14))
-//                        .foregroundColor(voucher.isRedeemed ? .gray : .black)
-//                        .frame(width: 70, height: 19)
-//                        .background(voucher.isRedeemed ? Color.gray.opacity(0.5) : Color(UIColor(hex: "FFBA00")))
-//                        .cornerRadius(5)
-//                }
-//                .padding(.horizontal)
-//            }.padding(.bottom)
-//               
-//        }
-//        .buttonStyle(PlainButtonStyle())
-//        .disabled(voucher.isRedeemed) // Disable tombol jika voucher sudah diredeem
-//    }
-
+    
     private func rewardItemView(voucher: (name: String, description: String, points: Int, category: Category, isRedeemed: Bool, images: String)) -> some View {
-        Button(action: {
-            if pointsModel.points >= voucher.points {
-                if isVoucherRedeemed(voucher: voucher) {
-                    // Show an alert or feedback saying the voucher has already been redeemed
-                    showingInsufficientPointsAlert.toggle()
-                } else {
-                    selectedVoucher = voucher
-                    showingConfirmation.toggle()
-                }
-            } else {
-                showingInsufficientPointsAlert.toggle()
-            }
-        }) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 15)
-                    .fill(voucher.isRedeemed ? Color.gray.opacity(0.5) : Color.white)
-                    .frame(width: 376, height: 98)
-                    .shadow(color: .black.opacity(0.1), radius: 5, x: 2, y: 2)
-
-                HStack {
-                    Image("\(voucher.images)")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 63, height: 63)
-                        .clipShape(Circle()) // Pastikan gambar berbentuk lingkaran
-                            .overlay(
-                                Circle().stroke(Color.white, lineWidth: 2) // Opsional: Tambahkan border putih
-                            )
-                        .padding()
-
-                    Divider()
-                        .frame(width: 1)
-
-                    VStack(alignment: .leading) {
-                        Text(voucher.name)
-                            .font(.system(size: 18))
-                            .foregroundColor(voucher.isRedeemed ? .gray : .black)
-
-                        Text(voucher.description)
-                            .font(.system(size: 10))
-                            .foregroundColor(voucher.isRedeemed ? .gray : .gray)
+        GeometryReader { geometry in
+            let isLandscape = geometry.size.width < geometry.size.height
+            Button(action: {
+                if pointsModel.points >= voucher.points {
+                    if isVoucherRedeemed(voucher: voucher) {
+                        // Show an alert or feedback saying the voucher has already been redeemed
+                        showingInsufficientPointsAlert.toggle()
+                    } else {
+                        selectedVoucher = voucher
+                        showingConfirmation.toggle()
                     }
-                    .frame(width: 157, alignment: .leading)
-
-                    Spacer()
-
-                    Text("\(voucher.points)P")
-                        .font(.system(size: 14))
-                        .foregroundColor(voucher.isRedeemed ? .gray : .black)
-                        .frame(width: 70, height: 19)
-                        .background(voucher.isRedeemed ? Color.gray.opacity(0.5) : Color(UIColor(hex: "FFBA00")))
-                        .cornerRadius(5)
+                } else {
+                    showingInsufficientPointsAlert.toggle()
                 }
-                .padding(.horizontal)
-            }.padding(.bottom)
+            }) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 15)
+                        .fill(voucher.isRedeemed ? Color.gray.opacity(0.5) : Color.white)
+                        .frame(width: geometry.size.width, height: isLandscape ? 120 : 98)
+                        .shadow(color: .black.opacity(0.1), radius: 5, x: 2, y: 2)
+
+                    HStack {
+                        Image("\(voucher.images)")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 63, height: 63)
+                            .clipShape(Circle())
+                            .overlay(
+                                Circle().stroke(Color.white, lineWidth: 2)
+                            )
+
+                        Divider()
+                            .frame(width: 1, height: 98)
+
+                        VStack(alignment: .leading) {
+                            Text(voucher.name)
+                                .font(.system(size: 18))
+                                .foregroundColor(voucher.isRedeemed ? .gray : .black)
+
+                            Text(voucher.description)
+                                .font(.system(size: 10))
+                                .foregroundColor(voucher.isRedeemed ? .gray : .gray)
+                        }
+                        
+                        .frame(width: geometry.size.width * 0.43, alignment: .leading)
+                        
+                        Spacer()
+
+                        Text("\(voucher.points)P")
+                            .font(.system(size: 14))
+                            .foregroundColor(voucher.isRedeemed ? .gray : .black)
+                            .frame(width: 70, height: 19)
+                            .background(voucher.isRedeemed ? Color.gray.opacity(0.5) : Color(UIColor(hex: "FFBA00")))
+                            .cornerRadius(5)
+                    }
+                    .padding(.horizontal)
+                }
+                .padding(.bottom)
+            }
+            .buttonStyle(PlainButtonStyle())
         }
-        .buttonStyle(PlainButtonStyle())
-        
+        .frame(height:112) // Adjust height for GeometryReader
     }
+
 
     private func isVoucherRedeemed(voucher: (name: String, description: String, points: Int, category: Category, isRedeemed: Bool, images: String)) -> Bool {
         let redeemedNames = UserDefaults.standard.stringArray(forKey: redeemedKey) ?? []
@@ -361,3 +309,4 @@ struct Rewards: View {
         }
     }
 }
+
