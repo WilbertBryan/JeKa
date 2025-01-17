@@ -26,13 +26,13 @@ struct Rewards: View {
 
     @State private var selectedCategory: Category = .all
     @State private var vouchers = [
-        (name: "Voucher Coffee", description: "Diskon 10% di kedai kopi batasnya hingga 2 Desember 2024, segera ambil syarat dan ketentuan berlaku", points: 50, category: Category.fnb, isRedeemed: false, images: "voucher_minum"),
-        (name: "Voucher Makanan", description: "Diskon 15% di restoran", points: 15, category: Category.fnb, isRedeemed: false, images: "voucher_makan"),
-        (name: "Voucher Taxi", description: "Diskon 25% untuk transportasi", points: 25, category: Category.transportation, isRedeemed: false, images: "voucher_taxi"),
-        (name: "Voucher Bus", description: "Diskon 30% untuk perjalanan bus", points: 30, category: Category.transportation, isRedeemed: false, images: "voucher_bus"),
-        (name: "Voucher Snacks", description: "Diskon 10% untuk makanan ringan", points: 10, category: Category.fnb, isRedeemed: false, images: "voucher_snack"),
-        (name: "Voucher Movie", description: "Diskon 15% untuk tiket film", points: 15, category: Category.entertainment, isRedeemed: false, images: "voucher_movie"),
-        (name: "Voucher Parking", description: "Diskon 20% untuk parkir", points: 20, category: Category.transportation, isRedeemed: false, images: "voucher_parking")
+        (name: "Voucher Coffee", description: "Diskon 10% di kedai kopi batasnya hingga 26 Januari 2025, syarat dan ketentuan berlaku", points: 50, category: Category.fnb, isRedeemed: false, images: "voucher_minum"),
+        (name: "Voucher Makanan", description: "Diskon 15% di restoran, batasnya hingga 20 Februari 2025", points: 15, category: Category.fnb, isRedeemed: false, images: "voucher_makan"),
+        (name: "Voucher Taxi", description: "Diskon 25% untuk transportasi, batasnya hingga 8 Februari 2025", points: 25, category: Category.transportation, isRedeemed: false, images: "voucher_taxi"),
+        (name: "Voucher Bus", description: "Diskon 30% untuk perjalanan bus, batasnya hingga 30 Januari 2025", points: 30, category: Category.transportation, isRedeemed: false, images: "voucher_bus"),
+        (name: "Voucher Snacks", description: "Diskon 10% untuk makanan ringan, batasnya hingga 30 Januari 2025", points: 10, category: Category.fnb, isRedeemed: false, images: "voucher_snack"),
+        (name: "Voucher Movie", description: "Diskon 15% untuk tiket film, batasnya hingga 21 Februari 2025", points: 15, category: Category.entertainment, isRedeemed: false, images: "voucher_movie"),
+        (name: "Voucher Parking", description: "Diskon 20% untuk parkir, batasnya hingga 20 Januari 2025", points: 20, category: Category.transportation, isRedeemed: false, images: "voucher_parking")
     ]
 
     private let redeemedKey = "redeemedVouchers"
